@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 # Creates grid world map, state is [S_1_k, S_2_k, S_3_k, S_4_k, r_1_k-1, r_2_k-1, r_3_k-1, r_4_k-1]
 # actions is [a_1, a_2, a_3, a_4]
@@ -147,7 +148,7 @@ class GridWorld:
                                        534,535,536,537,538,539])
         if rooms[4] > 0:
             # creating 5th room
-            self.border_map[48:60,23:30] = np.array([
+            self.border_map[47:60,23:30] = np.array([
                 [0,1,1,1,1,1,1], # horizontal 24
                 [1,0,0,0,0,0,1], # vertical 24
                 [0,0,0,0,0,0,0], # horizontal 25
@@ -171,10 +172,9 @@ class GridWorld:
                                             864,865,866,867,868,869,
                                             894, 895, 896, 897, 898, 899])
 
-
         if rooms[5] > 0:
             # creating 6th room
-            self.border_map[48:60,11:18] = np.array([
+            self.border_map[47:60,11:18] = np.array([
                 [0,1,1,1,1,1,1], # horizontal 24
                 [1,0,0,0,0,0,1], # vertical 24
                 [0,0,0,0,0,0,0], # horizontal 25
@@ -199,7 +199,7 @@ class GridWorld:
             
         if rooms[6] > 0:
             # creating 7th room
-            self.border_map[48:60,0:6] = np.array([
+            self.border_map[47:60,0:6] = np.array([
                 [0,1,1,1,1,1], # horizontal 24
                 [0,0,0,0,0,1], # vertical 24
                 [0,0,0,0,0,0], # horizontal 25
@@ -271,9 +271,9 @@ class GridWorld:
     def reset(self):
         self.state = 0
         # put all 4 agents in the middle of the grid
-        self.state = [404, 405, 434, 435]
+        self.state = np.array([404, 405, 434, 435, 0, 0, 0, 0])
 
-        return self.state
+        return torch.from_numpy(self.state).float(), False
 
     def state_transition_func(self, state, action):
         for i in range(4):
@@ -322,10 +322,11 @@ class GridWorld:
                 reward -= 1
                 self.state[i+4] = -1
         if reward == 4*10:
+            reward = 1000
             done = True
         else:
             done = False
-        return self.state, reward, done
+        return torch.tensor(self.state).float(), reward, done
 
 
 # setup_rooms = np.array([1,1,1,2,0,0,0,0])
@@ -355,7 +356,5 @@ class GridWorld:
 
 #     print("user_action")
 #     print(user_action)
-
-
 
 #     env.step(user_action)

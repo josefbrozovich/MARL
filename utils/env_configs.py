@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import itertools
+import torch
 
 def env_configs(poss_rooms=8, chose_rooms=4, goal_rooms=1):
 
