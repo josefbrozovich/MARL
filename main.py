@@ -13,7 +13,7 @@ train_data, validation_data, test_data = env_configs()
 agent = DQN()
 
 
-Epochs = 100
+Epochs = 20
 
 episode_mean_train = np.zeros((Epochs,1))
 episode_std_train = np.zeros((Epochs,1))
@@ -36,7 +36,7 @@ for e in range(Epochs):
 
         episodic_reward = 0
 
-        while steps < 500 and not done:
+        while steps < 200 and not done:
 
             action = agent.select_action(state)
 
@@ -66,6 +66,9 @@ for e in range(Epochs):
     for config in test_data:
         # make environment
 
+        if e == Epochs-1 and j == len(test_data)-1:
+            print("configuration", config)
+
         env = GridWorld(config)
         state, done = env.reset()
 
@@ -73,7 +76,7 @@ for e in range(Epochs):
 
         episodic_reward = 0
 
-        while steps < 500 and not done:
+        while steps < 200 and not done:
 
             action = agent.select_action(state)
 
@@ -88,8 +91,19 @@ for e in range(Epochs):
 
             steps += 1
 
+            if e == Epochs-1 and j == len(test_data)-1:
+                print("step")
+                for i in range(4):
+                    row = env.state[i] // 15
+                    column = env.state[i] % 15
+
+                    print("element", env.state[i], "row", row, "column", column)
+
+
+
         single_episode_test[j] = episodic_reward
         j = j+1
+
 
 
     episode_mean_test[e] = np.mean(single_episode_test)
@@ -102,7 +116,7 @@ Train_m_std_test_m_std = np.concatenate((episode_mean_train,episode_std_train, e
 column_labels = ['Mean_Train', 'STD_Train', 'Mean_Test', 'STD_Test']
 
 DF = pd.DataFrame(Train_m_std_test_m_std, columns=column_labels) 
-DF.to_csv("results/DQN_for_MARL_2.csv", index=False)
+DF.to_csv("results/DQN_for_MARL_15x15.csv", index=False)
 
 
 

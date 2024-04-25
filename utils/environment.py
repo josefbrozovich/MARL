@@ -6,13 +6,13 @@ import torch
 # 0=up, 1=right, 2=down, 3=left 
 
 class GridWorld:
-    def __init__(self, rooms=np.array([1,1,1,2,0,0,0,0]), size_of_maze=30):#, seed=None):
+    def __init__(self, rooms=np.array([1,1,1,2,0,0,0,0]), size_of_maze=15):#, seed=None):
 
         # gives L of map
         self.size_of_maze = size_of_maze
 
         # put four agents in the middle of the map, and have last rewards be 0
-        self.state = [404, 405, 434, 435, 0, 0, 0, 0]
+        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
 
         # checking valiidity of rooms
         if np.shape(rooms) != (8,):
@@ -38,217 +38,147 @@ class GridWorld:
         right_boarder[::2] = 1
         self.border_map[:,self.size_of_maze-1] = right_boarder
 
+
+
         # Creating custom maps
 
         if rooms[0] > 0:
             # creating 1st room
-            self.border_map[0:12,0:6] = np.array([
-                [0,0,0,0,0,0], # vertical 1
-                [0,0,0,0,0,0], # horizontal 1
-                [0,0,0,0,0,1], # vertical 2
-                [0,0,0,0,0,0], # horizontal 2
-                [0,0,0,0,0,1], # vertical 3
-                [0,0,0,0,0,0], # horizontal 3
-                [0,0,0,0,0,1], # vertical 4
-                [0,0,0,0,0,0], # horizontal 4
-                [0,0,0,0,0,1], # vertical 5
-                [0,0,0,0,0,0], # horizontal 5
-                [0,0,0,0,0,1], # vertical 6
-                [1,1,1,1,1,1], # horizontal 6
+            self.border_map[0:6,0:3] = np.array([
+                [0,0,0], # vertical 1
+                [0,0,0], # horizontal 1
+                [0,0,0], # vertical 2
+                [0,0,0], # horizontal 2
+                [0,0,0], # vertical 3
+                [1,1,1], # horizontal 3
                 ])
             
             if rooms[0] == 2:
                 # creating 1st room goal state
-                self.goal_state = np.array([0,1,2,3,4,5,
-                                            30,31,32,33,34,35,
-                                            60,61,62,63,64,65,
-                                            90,91,92,93,94,95,
-                                            120,121,122,123,124,125,
-                                            150,151,152,153,154,155])
+                self.goal_state = np.array([0,1,2,
+                                            15,16,17,
+                                            30,31,32])
 
             
         if rooms[1] > 0:
             # creating 2nd room
-            self.border_map[0:12,11:18] = np.array([
-                [1,0,0,0,0,0,0], # vertical 1
-                [0,0,0,0,0,0,0], # horizontal 1
-                [1,0,0,0,0,0,1], # vertical 2
-                [0,0,0,0,0,0,0], # horizontal 2
-                [1,0,0,0,0,0,1], # vertical 3
-                [0,0,0,0,0,0,0], # horizontal 3
-                [1,0,0,0,0,0,1], # vertical 4
-                [0,0,0,0,0,0,0], # horizontal 4
-                [1,0,0,0,0,0,1], # vertical 5
-                [0,0,0,0,0,0,0], # horizontal 5
-                [1,0,0,0,0,0,1], # vertical 6
-                [0,1,1,1,1,1,1], # horizontal 6
+            self.border_map[0:6,5:9] = np.array([
+                [1,0,0,0], # vertical 1
+                [0,0,0,0], # horizontal 1
+                [1,0,0,0], # vertical 2
+                [0,0,0,0], # horizontal 2
+                [1,0,0,0], # vertical 3
+                [0,1,1,1], # horizontal 3
                 ])
 
             if rooms[1] == 2:
                 # creating 2nd room goal state
-                self.goal_state = np.array([12,13,14,15,16,17,
-                                            42,43,44,45,46,47,
-                                            72,73,74,75,76,77,
-                                            102,103,104,105,106,107,
-                                            132,133,134,135,136,137,
-                                            162,163,164,165,166,167])
+                self.goal_state = np.array([6,7,8,
+                                            21,22,23,
+                                            36,37,38])
 
         if rooms[2] > 0:
             # creating 3rd room
-            self.border_map[0:12,23:30] = np.array([
-                [1,0,0,0,0,0,1], # vertical 1
-                [0,0,0,0,0,0,0], # horizontal 1
-                [1,0,0,0,0,0,1], # vertical 2
-                [0,0,0,0,0,0,0], # horizontal 2
-                [1,0,0,0,0,0,1], # vertical 3
-                [0,0,0,0,0,0,0], # horizontal 3
-                [1,0,0,0,0,0,1], # vertical 4
-                [0,0,0,0,0,0,0], # horizontal 4
-                [1,0,0,0,0,0,1], # vertical 5
-                [0,0,0,0,0,0,0], # horizontal 5
-                [1,0,0,0,0,0,1], # vertical 6
-                [0,1,1,1,1,1,0], # horizontal 6
+            self.border_map[0:6,11:15] = np.array([
+                [1,0,0,1], # vertical 1
+                [0,0,0,0], # horizontal 1
+                [1,0,0,1], # vertical 2
+                [0,0,0,0], # horizontal 2
+                [1,0,0,1], # vertical 3
+                [0,0,0,0], # horizontal 3
                 ])
 
             if rooms[2] == 2:
                 # creating 3rd room goal state
-                self.goal_state = np.array([24,25,26,27,28,29,
-                                            54,55,56,57,58,59,
-                                            84,85,86,87,88,89,
-                                            114,115,116,117,118,119,
-                                            144,145,146,147,148,149,
-                                            174,175,176,177,178,179])
-
+                self.goal_state = np.array([12,13,14,
+                                            27,28,29,
+                                            42,43,44])
 
         if rooms[3] > 0:
             # creating 4th room
-            self.border_map[23:36,23:30] = np.array([
-                [0,1,1,1,1,1,1], # horizontal 12
-                [1,0,0,0,0,0,1], # vertical 13
-                [0,0,0,0,0,0,0], # horizontal 13
-                [1,0,0,0,0,0,1], # vertical 14
-                [0,0,0,0,0,0,0], # horizontal 14
-                [1,0,0,0,0,0,1], # vertical 15
-                [0,0,0,0,0,0,0], # horizontal 15
-                [1,0,0,0,0,0,1], # vertical 16
-                [0,0,0,0,0,0,0], # horizontal 16
-                [1,0,0,0,0,0,1], # vertical 17
-                [0,0,0,0,0,0,0], # horizontal 17
-                [1,0,0,0,0,0,1], # vertical 18
-                [0,1,1,1,1,1,0], # horizontal 18
+            self.border_map[11:18,11:15] = np.array([
+                [0,1,1,1], # horizontal 6
+                [1,0,0,1], # vertical 7
+                [0,0,0,0], # horizontal 7
+                [1,0,0,1], # vertical 8
+                [0,0,0,0], # horizontal 8
+                [1,0,0,1], # vertical 9
+                [0,0,0,0], # horizontal 9
                 ])
 
             if rooms[3] == 2:
                 # creating 4th room goal state
-                self.goal_state = np.array([384,385,386,387,388,389,
-                                       414,415,416,417,418,419,
-                                       444,445,446,447,448,449,
-                                       474,475,476,477,478,479,
-                                       504,505,506,507,508,509, 
-                                       534,535,536,537,538,539])
+                self.goal_state = np.array([102, 103, 104,
+                                            117, 118, 119,
+                                            132, 133, 134])
         if rooms[4] > 0:
             # creating 5th room
-            self.border_map[47:60,23:30] = np.array([
-                [0,1,1,1,1,1,1], # horizontal 24
-                [1,0,0,0,0,0,1], # vertical 24
-                [0,0,0,0,0,0,0], # horizontal 25
-                [1,0,0,0,0,0,1], # vertical 25
-                [0,0,0,0,0,0,0], # horizontal 26
-                [1,0,0,0,0,0,1], # vertical 26
-                [0,0,0,0,0,0,0], # horizontal 27
-                [1,0,0,0,0,0,1], # vertical 27
-                [0,0,0,0,0,0,0], # horizontal 28
-                [1,0,0,0,0,0,1], # vertical 28
-                [0,0,0,0,0,0,0], # horizontal 29
-                [0,0,0,0,0,0,1], # vertical 29
+            self.border_map[23:,11:15] = np.array([
+                [0,1,1,1], # horizontal 12
+                [0,0,0,1], # vertical 13
+                [0,0,0,0], # horizontal 13
+                [0,0,0,1], # vertical 14
+                [0,0,0,0], # horizontal 14
+                [0,0,0,1], # vertical 15
                 ])
 
             if rooms[4] == 2:
                 # creating 5th room goal state
-                self.goal_state = np.array([744,745,746,747,748,749,
-                                            774,775,776,777,778,779,
-                                            804,805,806,807,808,809,
-                                            834,835,836,837,838,839,
-                                            864,865,866,867,868,869,
-                                            894, 895, 896, 897, 898, 899])
+                self.goal_state = np.array([192, 193, 194, 
+                                            207, 208, 209, 
+                                            222, 223, 224])
 
         if rooms[5] > 0:
             # creating 6th room
-            self.border_map[47:60,11:18] = np.array([
-                [0,1,1,1,1,1,1], # horizontal 24
-                [1,0,0,0,0,0,1], # vertical 24
-                [0,0,0,0,0,0,0], # horizontal 25
-                [1,0,0,0,0,0,1], # vertical 25
-                [0,0,0,0,0,0,0], # horizontal 26
-                [1,0,0,0,0,0,1], # vertical 26
-                [0,0,0,0,0,0,0], # horizontal 27
-                [1,0,0,0,0,0,1], # vertical 27
-                [0,0,0,0,0,0,0], # horizontal 28
-                [1,0,0,0,0,0,1], # vertical 28
-                [0,0,0,0,0,0,0], # horizontal 29
-                [0,0,0,0,0,0,1], # vertical 29
+            self.border_map[23:,5:9] = np.array([
+                [0,1,1,1], # horizontal 12
+                [0,0,0,1], # vertical 13
+                [0,0,0,0], # horizontal 13
+                [0,0,0,1], # vertical 14
+                [0,0,0,0], # horizontal 14
+                [0,0,0,1], # vertical 15
                 ])
             
             if rooms[5] == 2:
-                self.goal_state = np.array([732,733,734,735,736,737, 
-                                            762,763,764,765,766,767,
-                                            792,793,794,795,796,797,
-                                            822,823,824,825,826,827,
-                                            852,853,854,855,856,857,
-                                            882,883,884,885,886,887])
+                self.goal_state = np.array([186, 187, 188, 
+                                            201, 202, 203, 
+                                            216, 217, 218])
             
         if rooms[6] > 0:
             # creating 7th room
-            self.border_map[47:60,0:6] = np.array([
-                [0,1,1,1,1,1], # horizontal 24
-                [0,0,0,0,0,1], # vertical 24
-                [0,0,0,0,0,0], # horizontal 25
-                [0,0,0,0,0,1], # vertical 25
-                [0,0,0,0,0,0], # horizontal 26
-                [0,0,0,0,0,1], # vertical 26
-                [0,0,0,0,0,0], # horizontal 27
-                [0,0,0,0,0,1], # vertical 27
-                [0,0,0,0,0,0], # horizontal 28
-                [0,0,0,0,0,1], # vertical 28
-                [0,0,0,0,0,0], # horizontal 29
-                [0,0,0,0,0,1], # vertical 29
+            self.border_map[23:,0:3] = np.array([
+                [0,0,0], # horizontal 12
+                [0,0,1], # vertical 13
+                [0,0,0], # horizontal 13
+                [0,0,1], # vertical 14
+                [0,0,0], # horizontal 14
+                [0,0,1], # vertical 15
                 ])
             
             if rooms[6] == 2:
                 # creating 7th room goal state
-                self.goal_state = np.array([720,721,722,723,724,725,
-                                            750,751,752,753,754,755, 
-                                            780,781,782,783,784,785, 
-                                            810,811,812,813,814,815, 
-                                            840,841,842,843,844,845, 
-                                            870,871,872,873,874,875])
+                self.goal_state = np.array([180,181,182,
+                                            195,196,197,
+                                            210,211,212])
 
         if rooms[7] > 0:
             # creating 8th room
-            self.border_map[24:37,0:6] = np.array([
-                [0,1,1,1,1,1], # horizontal 12
-                [0,0,0,0,0,1], # vertical 13
-                [0,0,0,0,0,0], # horizontal 13
-                [0,0,0,0,0,1], # vertical 14
-                [0,0,0,0,0,0], # horizontal 14
-                [0,0,0,0,0,1], # vertical 15
-                [0,0,0,0,0,0], # horizontal 15
-                [0,0,0,0,0,1], # vertical 16
-                [0,0,0,0,0,0], # horizontal 16
-                [0,0,0,0,0,1], # vertical 17
-                [0,0,0,0,0,0], # horizontal 17
-                [0,0,0,0,0,1], # vertical 18
-                [1,1,1,1,1,1], # horizontal 18
+            self.border_map[11:18,0:3] = np.array([
+                [0,0,0], # horizontal 6
+                [0,0,1], # vertical 7
+                [0,0,0], # horizontal 7
+                [0,0,1], # vertical 8
+                [0,0,0], # horizontal 8
+                [0,0,1], # vertical 9
+                [1,1,1], # horizontal 9
                 ])
 
             if rooms[7] == 2:
                 # creating 8th room
-                self.goal_state = np.array([360,361,362,363,364,365,
-                                            390,391,392,393,394,395,
-                                            420,421,422,423,424,425,
-                                            450,451,452,453,454,455,
-                                            480,481,482,483,484,485, 
-                                            510,511,512,513,514,515])
+                self.goal_state = np.array([90,91,92,
+                                            105,106,107,
+                                            120,121,122])
+
 
     def state_to_border(self, state):
         row, column = np.divmod(state, self.size_of_maze)
@@ -271,7 +201,7 @@ class GridWorld:
     def reset(self):
         self.state = 0
         # put all 4 agents in the middle of the grid
-        self.state = np.array([404, 405, 434, 435, 0, 0, 0, 0])
+        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
 
         return torch.from_numpy(self.state).float(), False
 
@@ -316,45 +246,15 @@ class GridWorld:
         reward = 0
         for i in range(4):
             if self.state[i] in self.goal_state:
-                reward += 100
-                self.state[i+4] = 100
+                reward += 50
+                self.state[i+4] = 50
             else:
                 reward -= 1
                 self.state[i+4] = -1
-        if reward == 4*100:
-            # reward = 1000
+        if reward == 4*50:
+            reward = 1000
             done = True
         else:
             done = False
         return torch.tensor(self.state).float(), reward, done
 
-
-# setup_rooms = np.array([1,1,1,2,0,0,0,0])
-
-# print("np.shape(setup_rooms)[0]")
-# print(np.shape(setup_rooms)[0])
-
-# print("np.shape(setup_rooms)[1]")
-# print(np.shape(setup_rooms)[1])
-
-# env = GridWorldMazeEnv(setup_rooms)
-
-
-# done = False
-
-# while done == False:
-
-#     print("env.state")
-#     print(env.state)
-
-#     user_action_1 = input("action for first agent: ")
-#     user_action_2 = input("action for second agent: ")
-#     user_action_3 = input("action for third agent: ")
-#     user_action_4 = input("action for fourth agent: ")
-
-#     user_action = np.array([int(user_action_1), int(user_action_2), int(user_action_3), int(user_action_4)])
-
-#     print("user_action")
-#     print(user_action)
-
-#     env.step(user_action)
