@@ -76,7 +76,6 @@ class DQN:
         state_action_value = state_action_value[a0]
 
         loss = self.loss_fn(state_action_value,target_values)
-
         self.optim.zero_grad()
         loss.backward()
         self.optim.step()
