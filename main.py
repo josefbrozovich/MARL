@@ -12,16 +12,24 @@ train_data, validation_data, test_data = env_configs()
 
 agent = DQN()
 
-
 Epochs = 20
 
 episode_mean_train = np.zeros((Epochs,1))
 episode_std_train = np.zeros((Epochs,1))
+episode_done_train = np.zeros((Epochs,1))
+
 single_episode_train = np.zeros((len(train_data),1))
+single_episode_train_done = np.zeros((len(train_data),1))
+
 
 episode_mean_test = np.zeros((Epochs,1))
 episode_std_test = np.zeros((Epochs,1))
+episode_done_test = np.zeros((Epochs,1))
+
 single_episode_test = np.zeros((len(test_data),1))
+single_episode_test_done = np.zeros((len(test_data),1))
+
+
 
 for e in range(Epochs):
     
@@ -52,22 +60,24 @@ for e in range(Epochs):
 
             steps += 1
 
+        single_episode_train_done[j] = done
         single_episode_train[j] = episodic_reward
         j = j+1
 
 
     episode_mean_train[e] = np.mean(single_episode_train)
     episode_std_train[e] = np.std(single_episode_train)
+    episode_done_train[e] = np.mean(single_episode_train_done)
+
 
     print(f' ')
-    print(f'Training Episode {e + 1}, Average Reward: {episode_mean_train[e]}, STD: {episode_std_train[e]}')
+    print(f'Training Episode {e + 1}, Average Reward: {episode_mean_train[e]}, STD: {episode_std_train[e]}, %finish: {episode_done_train[e]}')
 
     j = 0
     for config in test_data:
-        # make environment
 
-        if e == Epochs-1 and j == len(test_data)-1:
-            print("configuration", config)
+        # if e == Epochs-1 and j == len(test_data)-1:
+        #     print("configuration", config)
 
         env = GridWorld(config)
         state, done = env.reset()
@@ -91,32 +101,32 @@ for e in range(Epochs):
 
             steps += 1
 
-            if e == Epochs-1 and j == len(test_data)-1:
-                print("step")
-                for i in range(4):
-                    row = env.state[i] // 15
-                    column = env.state[i] % 15
+            # if e == Epochs-1 and j == len(test_data)-1:
+            #     print("step")
+            #     for i in range(4):
+            #         row = env.state[i] // 15
+            #         column = env.state[i] % 15
 
-                    print("element", env.state[i], "row", row, "column", column)
+            #         print("element", env.state[i], "row", row, "column", column)
 
-
-
+        single_episode_test_done[j] = done
         single_episode_test[j] = episodic_reward
         j = j+1
 
 
-
     episode_mean_test[e] = np.mean(single_episode_test)
     episode_std_test[e] = np.std(single_episode_test)
+    episode_done_test[e] = np.mean(single_episode_test_done)
 
-    print(f'Testing Episode {e + 1}, Average Reward: {episode_mean_test[e]}, STD: {episode_std_test[e]}')
 
-Train_m_std_test_m_std = np.concatenate((episode_mean_train,episode_std_train, episode_mean_test, episode_std_test), axis=1)
+    print(f'Testing Episode {e + 1}, Average Reward: {episode_mean_test[e]}, STD: {episode_std_test[e]}, %finish: {episode_done_test[e]}')
 
-column_labels = ['Mean_Train', 'STD_Train', 'Mean_Test', 'STD_Test']
+Data_np = np.concatenate((episode_mean_train,episode_std_train, episode_done_train, episode_mean_test, episode_std_test, episode_done_test), axis=1)
 
-DF = pd.DataFrame(Train_m_std_test_m_std, columns=column_labels) 
-DF.to_csv("results/DQN_for_MARL_15x15.csv", index=False)
+column_labels = ['Mean_Train', 'STD_Train', 'Finish Train', 'Mean_Test', 'STD_Test', 'Finish Test']
+
+DF = pd.DataFrame(Data_np, columns=column_labels) 
+DF.to_csv("results/DQN_for_MARL_15x15_more.csv", index=False)
 
 
 
