@@ -102,7 +102,7 @@ Train_m_std_test_m_std = np.concatenate((episode_mean_train,episode_std_train, e
 column_labels = ['Mean_Train', 'STD_Train', 'Mean_Test', 'STD_Test']
 
 DF = pd.DataFrame(Train_m_std_test_m_std, columns=column_labels) 
-DF.to_csv("results/DQN_for_MARL.csv", index=False)
+DF.to_csv("results/DQN_for_MARL_2.csv", index=False)
 
 
 

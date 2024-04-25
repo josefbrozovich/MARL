@@ -316,13 +316,13 @@ class GridWorld:
         reward = 0
         for i in range(4):
             if self.state[i] in self.goal_state:
-                reward += 10
+                reward += 100
                 self.state[i+4] = 100
             else:
                 reward -= 1
                 self.state[i+4] = -1
         if reward == 4*100:
-            reward = 1000
+            # reward = 1000
             done = True
         else:
             done = False
