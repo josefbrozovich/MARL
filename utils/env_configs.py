@@ -38,8 +38,8 @@ def env_configs(poss_rooms=8, chose_rooms=4, goal_rooms=1):
     row_indices = np.random.permutation(num_rows)
     configs = configs[row_indices]
 
-    train_index = int(0.7*np.shape(configs)[0])
-    validation_index = int(0.85*np.shape(configs)[0])
+    train_index = int(0.8*np.shape(configs)[0])
+    validation_index = int(0.8*np.shape(configs)[0])
 
     train_data = configs[:train_index,:]
     validation_data = configs[train_index:validation_index,:]

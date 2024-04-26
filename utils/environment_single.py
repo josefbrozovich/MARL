@@ -11,10 +11,10 @@ class GridWorld:
         # gives L of map
         self.size_of_maze = size_of_maze
 
-        # put four agents in the middle of the map, and have last rewards be 0
-        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
+        # put single agents in the middle of the map
+        self.state = np.array([112])
 
-        # checking valiidity of actions
+        # checking valiidity of rooms
         if np.shape(rooms) != (8,):
             raise ValueError("The rooms should be an array of length 8")
         counts = np.bincount(rooms)
@@ -22,7 +22,7 @@ class GridWorld:
             raise ValueError("The rooms have 3 normal rooms")
         if counts[2] != 1:
             raise ValueError("The rooms have 1 goal state")
-        # 
+        #
 
         self.border_map = np.zeros((2*self.size_of_maze-1,self.size_of_maze))
         # self.boarder map has pattern of
@@ -37,7 +37,6 @@ class GridWorld:
         right_boarder = np.zeros(2*self.size_of_maze-1)
         right_boarder[::2] = 1
         self.border_map[:,self.size_of_maze-1] = right_boarder
-
 
 
         # Creating custom maps
@@ -201,58 +200,52 @@ class GridWorld:
     def reset(self):
         self.state = 0
         # put all 4 agents in the middle of the grid
-        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
+        self.state = np.array([112])
 
         return torch.from_numpy(self.state).float(), False
 
     def state_transition_func(self, state, action):
-        for i in range(4):
-            assert state[i] in range(self.size_of_maze**2), "Error: The state input is invalid!"
 
-        # checking valiidity of rooms
-        if np.shape(action) != (4,):
-            raise ValueError("Each agent should have its own action")
-        if np.all(~((action >= 0) & (action <= 4))):
-            raise ValueError("Each action should be between 0 and 3")
-        # 
+        # # checking validity of state
+        # assert state[0] in range(self.size_of_maze**2), "Error: The state input is invalid!"
+
+        # # checking validity of action
+        # if np.shape(action) != (4,):
+        #     raise ValueError("Each agent should have its own action")
+        # if np.all(~((action >= 0) & (action <= 4))):
+        #     raise ValueError("Each action should be between 0 and 3")
+        # # 
 
         next_state = state
-        for i in range(4):
-            border = self.state_to_border(state[i])
-            if action[i] == 0:
-                if border[0] == 0:
-                    next_state[i] = state[i] - self.size_of_maze
-            elif action[i] == 1:
-                if border[1] == 0:
-                    next_state[i] = state[i] + 1
-            elif action[i] == 2:
-                if border[2] == 0:
-                    next_state[i] = state[i] + self.size_of_maze
-            elif action[i] == 3:
-                if border[3] == 0:
-                    next_state[i] = state[i] - 1
+
+        border = self.state_to_border(state[0])
+        if action[0] == 0:
+            if border[0] == 0:
+                next_state[0] = state[0] - self.size_of_maze
+        elif action[0] == 1:
+            if border[1] == 0:
+                next_state[0] = state[0] + 1
+        elif action[0] == 2:
+            if border[2] == 0:
+                next_state[0] = state[0] + self.size_of_maze
+        elif action[0] == 3:
+            if border[3] == 0:
+                next_state[0] = state[0] - 1
 
         return next_state
 
     def step(self, action):
 
-        # checking valiidity of rooms
-        if np.shape(action) != (4,):
-            raise ValueError("Each agent should have its own action")
-        if np.all(~((action >= 0) & (action <= 4))):
-            raise ValueError("Each action should be between 0 and 3")
-        # 
+        # # checking valiidity of rooms
+        # if np.shape(action) != (4,):
+        #     raise ValueError("Each agent should have its own action")
+        # if np.all(~((action >= 0) & (action <= 4))):
+        #     raise ValueError("Each action should be between 0 and 3")
+        # # 
         self.state = self.state_transition_func(self.state, action)
         reward = 0
-        for i in range(4):
-            if self.state[i] in self.goal_state:
-                reward += 10
-                self.state[i+4] = 10
-            else:
-                reward -= 1
-                self.state[i+4] = -1
-        if reward == 4*10:
-            reward = 1000
+        if self.state[0] in self.goal_state:
+            reward += 100
             done = True
         else:
             done = False

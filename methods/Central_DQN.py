@@ -6,7 +6,7 @@ import numpy as np
 A simple Q-network class
 """
 class QNetwork(torch.nn.Module):
-    def __init__(self, input_dim=8, output_dim=256, hidden_dim_1=128, hidden_dim_2=128):
+    def __init__(self, input_dim=12, output_dim=256, hidden_dim_1=128, hidden_dim_2=128):
         """
         Args:
             input_dim (int): state dimension.
@@ -34,9 +34,8 @@ class QNetwork(torch.nn.Module):
         return x3
 
 class DQN:
-    def __init__(self, output_dim = 4*4, gamma=0.99, eps = 1.9):
-        self.output_dim = 16
-        self.gamma = 0.99
+    def __init__(self, gamma=0.99, eps = 1.9):
+        self.gamma = gamma
         self.eps = eps
         self.dqn = QNetwork()  # Q network
         self.dqn_target = QNetwork()  # Target Q network
