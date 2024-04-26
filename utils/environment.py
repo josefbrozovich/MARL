@@ -12,7 +12,7 @@ class GridWorld:
         self.size_of_maze = size_of_maze
 
         # put four agents in the middle of the map, and have last rewards be 0
-        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
+        self.state = np.array([111, 112, 113, 127])
 
         # checking valiidity of actions
         if np.shape(rooms) != (8,):
@@ -38,8 +38,6 @@ class GridWorld:
         right_boarder[::2] = 1
         self.border_map[:,self.size_of_maze-1] = right_boarder
 
-
-
         # Creating custom maps
 
         if rooms[0] > 0:
@@ -58,7 +56,6 @@ class GridWorld:
                 self.goal_state = np.array([0,1,2,
                                             15,16,17,
                                             30,31,32])
-
             
         if rooms[1] > 0:
             # creating 2nd room
@@ -201,7 +198,7 @@ class GridWorld:
     def reset(self):
         self.state = 0
         # put all 4 agents in the middle of the grid
-        self.state = np.array([111, 112, 113, 127, 0, 0, 0, 0])
+        self.state = np.array([111, 112, 113, 127])
 
         return torch.from_numpy(self.state).float(), False
 
@@ -244,17 +241,12 @@ class GridWorld:
         # 
         self.state = self.state_transition_func(self.state, action)
         reward = 0
+        done = False
         for i in range(4):
             if self.state[i] in self.goal_state:
                 reward += 10
-                self.state[i+4] = 10
+                done = True
             else:
                 reward -= 1
-                self.state[i+4] = -1
-        if reward == 4*10:
-            reward = 1000
-            done = True
-        else:
-            done = False
         return torch.tensor(self.state).float(), reward, done
 
