@@ -31,10 +31,10 @@ single_episode_test_done = np.zeros((len(test_data),1))
 for e in range(Epochs):
     
     j = 0
-    # for config in train_data:
+    for config in train_data:
         # make environment
-    if True:
-        config = train_data[0,:]
+    # if True:
+    #     config = train_data[0,:]
 
         env = GridWorld(config)
         state, done = env.reset()
